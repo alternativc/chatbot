@@ -1,0 +1,50 @@
+stages:
+  - package
+  - plan
+  - apply
+
+.package_template: &python_based_steps
+  image: python:3.11
+  tags:
+    - devops-prod
+  before_script:
+    - pip install --upgrade pip
+    - apt-get update && apt-get install -y zip
+
+.terraform_template: &terraform_based_steps
+  image: hashicorp/terraform:1.4.5
+  tags:
+    - devops-prod
+  before_script:
+    - cd terraform
+    - terraform --version
+    - terraform init
+
+package:
+  <<: *python_based_steps
+  stage: package
+  script:
+    - cd scripts
+    - chmod +x package-lambda.sh
+    - ./package-lambda.sh
+  artifacts:
+    paths:
+      - lambda/*/package
+
+plan:
+  <<: *terraform_based_steps
+  stage: plan
+  script:
+    - terraform plan -out=$CI_PROJECT_DIR/tfplan
+  artifacts:
+    paths:
+      - $CI_PROJECT_DIR/tfplan
+
+apply:
+  <<: *terraform_based_steps
+  stage: apply
+  script:
+    - terraform apply -input=false $CI_PROJECT_DIR/tfplan
+  when: manual
+  only:
+    - master

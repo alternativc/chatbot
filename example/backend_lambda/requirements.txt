@@ -1,0 +1,2 @@
+# Add requirements needed by your lambda function here, for example:
+requests
