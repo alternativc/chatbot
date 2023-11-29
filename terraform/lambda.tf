@@ -156,7 +156,7 @@ resource "aws_iam_policy" "iam_policy_for_prod_a" {
         Action = [
           "sts:AssumeRole"
         ],
-        Resource = "arn:aws:iam::324006799445:role/killswitch",
+        Resource = "arn:aws:iam::XXX:role/killswitch",
         Effect   = "Allow"
       }
     ]
@@ -221,8 +221,8 @@ resource "aws_lambda_function" "qchain_lambda" {
   source_code_hash = filebase64sha256("${path.module}/../lambda/qchain/package/qchain.zip")
 
   vpc_config {
-    subnet_ids         = ["subnet-0ec7a0624d86bb0d5", "subnet-049707e0b7e5a064f"]
-    security_group_ids = ["sg-0f02d69f5e6ae1906"]
+    subnet_ids         = ["subnet-XXX", "subnet-XXX"]
+    security_group_ids = ["sg-XXX"]
   }
 
   environment {
